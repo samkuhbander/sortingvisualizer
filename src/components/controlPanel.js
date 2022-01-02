@@ -1,15 +1,15 @@
 //Create control panel component
 import React from "react";
-import {bubbleSort} from "../algorithms/bubbleSort.js";
-import {selectionSort} from "../algorithms/selectionSort.js";
-import {insertionSort} from "../algorithms/insertionSort.js";
-import {mergeSort} from "../algorithms/mergeSort.js";
-import {quickSort} from "../algorithms/quickSort.js";
-import {heapSort} from "../algorithms/heapSort.js";
-import Bars from "./array.js";
+import { bubbleSort } from "../algorithms/bubbleSort.js";
+import { selectionSort } from "../algorithms/selectionSort.js";
+import { insertionSort } from "../algorithms/insertionSort.js";
+import { mergeSort } from "../algorithms/mergeSort.js";
+import { quickSort } from "../algorithms/quickSort.js";
+import { heapSort } from "../algorithms/heapSort.js";
 
 const SECONDARY_COLOR = "#666";
 const PRIMARY_COLOR = "#ff4d4d";
+
 
 export default class ControlPanel extends React.Component {
     constructor(props) {
@@ -40,12 +40,19 @@ export default class ControlPanel extends React.Component {
             }
         }
     }
+    //Reseet array to random values and set color to default
     resetArray() {
         const array = [];
-        for (let i = 0; i < this.state.array.length; i++) {
-            array.push(this.state.array[i]);
+        for (let i = 0; i < 100; i++) {
+            array.push(Math.floor(Math.random() * 200));
+        }
+        const arrayBars = document.getElementsByClassName('array-bar');
+        for (let i = 0; i < arrayBars.length; i++) {
+            arrayBars[i].style.backgroundColor = PRIMARY_COLOR;
         }
         this.setState({ array });
+        this.setState({ isSorted: false });
+
     }
     handleSpeedChange(speed) {
         this.setState({ speed });
@@ -53,55 +60,32 @@ export default class ControlPanel extends React.Component {
     handleSortAlgorithmChange(sortAlgorithm) {
         this.setState({ sortAlgorithm });
     }
+    //Use sorting algothim to sort array
+    //And show animation
     sort(sortAlgorithm) {
         const animations = this.state.sortAlgorithms[sortAlgorithm](this.state.array);
         for (let i = 0; i < animations.length; i++) {
             const arrayBars = document.getElementsByClassName('array-bar');
-            const isColorChange = i % 3 !== 2;
-            if (isColorChange) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = i % 3 === 0 ? PRIMARY_COLOR : SECONDARY_COLOR;
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * this.state.speed);
-            }
+            const [barOneIdx, barTwoIdx] = animations[i];
+            const barOneStyle = arrayBars[barOneIdx].style;
+            const barTwoStyle = arrayBars[barTwoIdx].style;
+            setTimeout(() => {
+                barOneStyle.height = `${this.state.array[barOneIdx]}px`;
+                barTwoStyle.height = `${this.state.array[barTwoIdx]}px`;
+            }, i * this.state.speed);
         }
+        setTimeout(() => {
+            this.setState({ isSorting: false });
+            this.setState({ isSorted: true });
+        }, animations.length * this.state.speed);
     }
+
+       
     render() {
-        const { array, speed, isSorting, isSorted, sortAlgorithm, sortAlgorithms } = this.state;
+        const { array } = this.state;
+
         return (
-            <div className="control-panel">
-                <div className="controls">
-                    <div className="speed-control">
-                        <label htmlFor="speed">Speed</label>
-                        <input
-                            id="speed"
-                            type="range"
-                            min="1"
-                            max="100"
-                            value={speed}
-                            onChange={(event) => this.handleSpeedChange(event.target.value)}
-                        />
-                    </div>
-                    <div className="sort-control">
-                        <label htmlFor="sort-algorithm">Sort Algorithm</label>
-                        <select
-                            id="sort-algorithm"
-                            value={sortAlgorithm}
-                            onChange={(event) => this.handleSortAlgorithmChange(event.target.value)}
-                        >
-                            <option value="">Select a sort algorithm</option>
-                            {Object.keys(sortAlgorithms).map((sortAlgorithm) => (
-                                <option key={sortAlgorithm} value={sortAlgorithm}>
-                                    {sortAlgorithm}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+            <div>
                 <div className="array-container">
                     {array.map((value, idx) => (
                         <div
@@ -110,17 +94,97 @@ export default class ControlPanel extends React.Component {
                             style={{
                                 backgroundColor: PRIMARY_COLOR,
                                 height: `${value}px`,
-                            }}
-                        ></div>
+                                width: `${100 / array.length}%`,
+                                float: 'left',
+                            }}>
+                        </div>
                     ))}
                 </div>
-                <button
-                    className="reset-button"
-                    onClick={() => this.resetArray()}
-                    disabled={isSorting}
-                >
-                    Reset
-                </button>
+                <div className="control-panel">
+                    <button onClick={() => this.resetArray()}>Generate new array</button>
+                    <div>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort-algorithm"
+                                value="bubble"
+                                checked={this.state.sortAlgorithm === 'bubble'}
+                                onChange={() => this.handleSortAlgorithmChange('bubble')}
+                            />
+                            Bubble Sort
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort-algorithm"
+                                value="selection"
+                                checked={this.state.sortAlgorithm === 'selection'}
+                                onChange={() => this.handleSortAlgorithmChange('selection')}
+                            />
+                            Selection Sort
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort-algorithm"
+                                value="insertion"
+                                checked={this.state.sortAlgorithm === 'insertion'}
+                                onChange={() => this.handleSortAlgorithmChange('insertion')}
+                            />
+                            Insertion Sort
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort-algorithm"
+                                value="merge"
+                                checked={this.state.sortAlgorithm === 'merge'}
+                                onChange={() => this.handleSortAlgorithmChange('merge')}
+                            />
+                            Merge Sort
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort
+                        Sort"
+                                value="quick"
+                                checked={this.state.sortAlgorithm === 'quick'}
+                                onChange={() => this.handleSortAlgorithmChange('quick')}
+                            />
+                            Quick Sort
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="sort
+                        Sort"
+                                value="heap"
+                                checked={this.state.sortAlgorithm === 'heap'}
+                                onChange={() => this.handleSortAlgorithmChange('heap')}
+                            />
+                            Heap Sort
+                        </label>
+                    </div>
+                    <div>
+                        <button onClick={() => this.sort(this.state.sortAlgorithm)}>
+                            Sort!
+                        </button>
+                    </div>
+                    <div>
+                        <label>
+                            Speed:
+                            <input
+                                type="range"
+                                name="speed"
+                                min="1"
+                                max="100"
+                                value={this.state.speed}
+                                onChange={(e) => this.handleSpeedChange(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                </div>
             </div>
         );
     }

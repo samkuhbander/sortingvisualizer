@@ -1,6 +1,5 @@
 import './App.css';
 import SortingVisualizer from './components/SortingVisualizer.js';
-import Array from './components/array';
 
 function App() {
   return (

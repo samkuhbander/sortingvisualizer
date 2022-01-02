@@ -2,19 +2,16 @@
 
 export function bubbleSort(arr) {
     let animations = [];
-    let swapped;
-    do {
-        swapped = false;
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i] > arr[i + 1]) {
-                animations.push([i, i + 1]);
-                animations.push([i, i + 1]);
-                let temp = arr[i];
-                arr[i] = arr[i + 1];
-                arr[i + 1] = temp;
-                swapped = true;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr.length - i - 1; j++) {
+            animations.push([j, j + 1]);
+            animations.push([j, j + 1]);
+            if (arr[j] > arr[j + 1]) {
+                let temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
             }
         }
-    } while (swapped);
+    }
     return animations;
 }
