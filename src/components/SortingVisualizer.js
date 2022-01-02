@@ -1,13 +1,17 @@
 import React from "react";
-// import bubbleSort from "../algorithms/bubbleSort.js";
-// import selectionSort from "../algorithms/selectionSort.js";
-// import insertionSort from "../algorithms/insertionSort.js";
-// import mergeSort from "../algorithms/mergeSort.js";
-// import quickSort from "../algorithms/quickSort.js";
-// import heapSort from "../algorithms/heapSort.js";
-import array from "../components/array.js";
+import {bubbleSort} from "../algorithms/bubbleSort.js";
+import {selectionSort} from "../algorithms/selectionSort.js";
+import {insertionSort} from "../algorithms/insertionSort.js";
+import {mergeSort} from "../algorithms/mergeSort.js";
+import {quickSort} from "../algorithms/quickSort.js";
+import {heapSort} from "../algorithms/heapSort.js";
+import ControlPanel from "./controlPanel.js";
+import Bars from "./array.js"
 
+const SECONDARY_COLOR = "#666";
+const PRIMARY_COLOR = "#ff4d4d";
 
+const array = [5, 3, 7, 2, 9, 1, 6, 4, 8];
 //display sorting visualizer as react component
 class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -78,8 +82,23 @@ class SortingVisualizer extends React.Component {
     }
     render() {
         const { array, isSorting, isSorted, sortAlgorithm } = this.state;
-        return (React.createElement("div", { className: "array-container" },
-            React.createElement("div", { className: "array-bar-container" }, array.map((value, idx) => (React.createElement(ArrayBar, { key: idx, value: value, idx: idx, isSorting: isSorting, isSorted: isSorted })))),
-            React.createElement(ControlPanel, { handleSpeedChange: this.handleSpeedChange.bind(this), handleSortAlgorithmChange: this.handleSortAlgorithmChange.bind(this), isSorting: isSorting, sortAlgorithm: sortAlgorithm })));
+        return (
+            <div>
+                <Bars array={array} />
+                <ControlPanel 
+                    array={array}
+                    isSorting={isSorting}
+                    isSorted={isSorted}
+                    sortAlgorithm={sortAlgorithm}
+                    sortAlgorithms={this.state.sortAlgorithms}
+                    handleSpeedChange={this.handleSpeedChange.bind(this)}
+                    handleSortAlgorithmChange={this.handleSortAlgorithmChange.bind(this)}
+                    handleSort={() => this.setState({ isSorting: true })}
+                    handleReset={() => this.resetArray()}
+                />
+            </div>
+        );
     }
-} export default SortingVisualizer;
+}
+
+export default SortingVisualizer;
