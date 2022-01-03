@@ -6,6 +6,7 @@ import { insertionSort } from "../algorithms/insertionSort.js";
 import { mergeSort } from "../algorithms/mergeSort.js";
 import { quickSort } from "../algorithms/quickSort.js";
 import { heapSort } from "../algorithms/heapSort.js";
+import "../css/controlPanel.css";
 
 const SECONDARY_COLOR = "#666";
 const PRIMARY_COLOR = "#ff4d4d";
@@ -16,7 +17,7 @@ export default class ControlPanel extends React.Component {
         super(props);
         this.state = {
             array: [],
-            speed: 1,
+            speed: 50,
             isSorting: false,
             isSorted: false,
             sortAlgorithm: '',
@@ -43,8 +44,8 @@ export default class ControlPanel extends React.Component {
     //Reseet array to random values and set color to default
     resetArray() {
         const array = [];
-        for (let i = 0; i < 100; i++) {
-            array.push(Math.floor(Math.random() * 200));
+        for (let i = 0; i < 200; i++) {
+            array.push(Math.floor(Math.random() * 300));
         }
         const arrayBars = document.getElementsByClassName('array-bar');
         for (let i = 0; i < arrayBars.length; i++) {
@@ -52,7 +53,6 @@ export default class ControlPanel extends React.Component {
         }
         this.setState({ array });
         this.setState({ isSorted: false });
-
     }
     handleSpeedChange(speed) {
         this.setState({ speed });
@@ -72,21 +72,19 @@ export default class ControlPanel extends React.Component {
             setTimeout(() => {
                 barOneStyle.height = `${this.state.array[barOneIdx]}px`;
                 barTwoStyle.height = `${this.state.array[barTwoIdx]}px`;
-            }, i * this.state.speed);
+            }, i / this.state.speed * 300);
         }
         setTimeout(() => {
             this.setState({ isSorting: false });
             this.setState({ isSorted: true });
-        }, animations.length * this.state.speed);
+        }, animations.length / this.state.speed * 300);
     }
 
-       
     render() {
         const { array } = this.state;
-
         return (
             <div>
-                <div className="array-container">
+                <div className="array-container" style={{marginBottom: "10vh", padding:"2vh"}}>
                     {array.map((value, idx) => (
                         <div
                             className="array-bar"
@@ -94,15 +92,13 @@ export default class ControlPanel extends React.Component {
                             style={{
                                 backgroundColor: PRIMARY_COLOR,
                                 height: `${value}px`,
-                                width: `${100 / array.length}%`,
-                                float: 'left',
                             }}>
                         </div>
                     ))}
                 </div>
-                <div className="control-panel">
-                    <button onClick={() => this.resetArray()}>Generate new array</button>
-                    <div>
+                <div>
+                <button onClick={() => this.resetArray()}>Generate new array</button>
+                    <div className="sortingLabels" style={{textAlign: "center" }}>
                         <label>
                             <input
                                 type="radio"
